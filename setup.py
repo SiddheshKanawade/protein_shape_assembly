@@ -12,6 +12,7 @@ requirements = [
     "isort==5.9.3",
     "black==22.3.0",
     "autoflake==1.4",
+    "scipy==1.12.0",
 ]
 
 __version__ = "0.0.1"
