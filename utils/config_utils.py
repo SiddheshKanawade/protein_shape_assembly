@@ -7,6 +7,10 @@ def merge_cfg(base_cfg, base_dir, cfg_lst):
     """Merge a list of sub configs to the base config."""
     for k, v in cfg_lst.items():
         sys.path.append(os.path.join(base_dir, os.path.dirname(v)))
+        print("Merge cfgs")
+        print(os.path.dirname(v))
+        print(base_dir)
+        print(os.path.basename(v[:-3]))
         lib = importlib.import_module(os.path.basename(v[:-3]))
         sub_cfg = lib.get_cfg_defaults()
         if k not in base_cfg:
