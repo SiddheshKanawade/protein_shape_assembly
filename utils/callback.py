@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 from pytorch_lightning import Callback
 
@@ -24,7 +23,7 @@ class PCAssemblyLogCallback(Callback):
             gt_pcs[i][:, 0] = gt_pcs[i][:, 0] + 1.5
             for j in range(len(pred_pcs[0])):
                 pred_pcs[i][j][:, 0] = pred_pcs[i][j][:, 0] - 1.5 * j
-        
+
         print(f"{split} part poses:")
         for i in range(num):
             print(f"Part {i}:")
