@@ -5,7 +5,6 @@ requirements = [
     "pyyaml",
     "trimesh",
     "torch",
-    "pytorch_lightning==1.6.2",
     "tqdm",
     "yacs",
     "einops",
