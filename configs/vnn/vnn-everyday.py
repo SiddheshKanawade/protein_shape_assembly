@@ -1,6 +1,6 @@
 import os
 
-from multi_part_assembly.utils import merge_cfg
+from utils import merge_cfg
 from yacs.config import CfgNode as CN
 
 _base_ = {
