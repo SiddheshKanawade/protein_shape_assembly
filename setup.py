@@ -10,6 +10,7 @@ requirements = [
     "tqdm",
     "yacs",
     "einops",
+    "matplotlib.pyplot",
     "isort==5.9.3",
     "black==22.3.0",
     "autoflake==1.4",
