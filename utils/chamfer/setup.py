@@ -9,8 +9,13 @@ Notes:
 from setuptools import setup
 from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
-# Ensure the CUDA version is set to 10.2
-CUDA_VERSION = "10.2"
+# CUDA_ARCH can be set to your specific GPU architecture, e.g., 'sm_35', 'sm_50', 'sm_60', 'sm_70', etc.
+CUDA_ARCH = None
+
+
+if CUDA_ARCH is None:
+    # If CUDA_ARCH is not specified, use the architecture of the current GPU.
+    CUDA_ARCH = "sm_" + "75"
 
 setup(
     name="chamfer_ext",
@@ -22,14 +27,8 @@ setup(
                 "cuda/chamfer_kernel.cu",
             ],
             extra_compile_args={
-                "cxx": ["-g"],  # Use C++14 standard for C++ compilation
-                "nvcc": [
-                    "-O2",
-                    "-ccbin",
-                    "/opt/ohpc/pub/gcc/gcc-7.5.0/bin/gcc",  # Specify the path to the GCC executable
-                    "-gencode",
-                    "arch=compute_75,code=sm_75",
-                ],
+                "cxx": ["-g"],
+                "nvcc": ["-O2", "--gpu-architecture=" + CUDA_ARCH],
             },
         ),
     ],
