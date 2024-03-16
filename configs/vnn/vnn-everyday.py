@@ -17,5 +17,8 @@ _C = CN()
 
 def get_cfg_defaults():
     base_cfg = _C.clone()
+    print(base_cfg)
+    print(os.path.dirname(__file__))
+    print(_base_)
     cfg = merge_cfg(base_cfg, os.path.dirname(__file__), _base_)
     return cfg
