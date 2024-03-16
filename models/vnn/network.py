@@ -2,8 +2,8 @@ import copy
 
 import torch
 import torch.nn.functional as F
-from multi_part_assembly.models import BaseModel
-from multi_part_assembly.utils import (
+from models import BaseModel
+from utils import (
     Rotation3D,
     _valid_mean,
     chamfer_distance,
