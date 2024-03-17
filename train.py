@@ -62,6 +62,7 @@ def main(cfg):
     #     callbacks.append(assembly_callback)
 
     all_gpus = list(cfg.exp.gpus)
+    print(all_gpus)
     trainer = pl.Trainer(
         gpus=all_gpus,
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
