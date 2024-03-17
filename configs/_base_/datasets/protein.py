@@ -7,12 +7,12 @@ _C.dataset = "protein"
 _C.data_dir = "protein_data"
 _C.data_fn = "data_split/protein.{}.txt"
 _C.data_keys = ("part_ids",)
-_C.category = ""  # empty means all categories
+_C.category = "all"  # empty means all categories
 _C.rot_range = -1.0  # rotation range for curriculum learning
 _C.num_pc_points = 512  # points per part
 _C.min_num_part = 2
 _C.max_num_part = 20
-_C.shuffle_parts = False
+_C.shuffle_parts = True
 _C.overfit = -1
 # _C.all_category = [
 #     'BeerBottle', 'Bowl', 'Cup', 'DrinkingUtensil', 'Mug', 'Plate', 'Spoon',

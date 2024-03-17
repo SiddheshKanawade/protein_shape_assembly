@@ -19,7 +19,7 @@ class GeometryPartDataset(Dataset):
         data_dir,
         data_fn,
         data_keys,
-        category="BeerBottle",
+        category="all",
         num_points=1000,
         min_num_part=2,
         max_num_part=20,
@@ -48,12 +48,12 @@ class GeometryPartDataset(Dataset):
         """Filter out invalid number of parts."""
         with open(os.path.join(self.data_dir, data_fn), "r") as f:
             mesh_list = [line.strip() for line in f.readlines()]
-            if self.category:
-                mesh_list = [
-                    line
-                    for line in mesh_list
-                    if self.category in line.split("/")
-                ]
+            # if self.category:
+            #     mesh_list = [
+            #         line
+            #         for line in mesh_list
+            #         if self.category in line.split("/")
+            #     ]
         data_list = []
         for mesh in mesh_list:
             mesh_dir = os.path.join(self.data_dir, mesh)
