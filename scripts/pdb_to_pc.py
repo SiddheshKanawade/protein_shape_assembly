@@ -18,9 +18,8 @@ for filename in os.listdir(pdb_data_dir):
     for file in os.listdir(file_path):
         if file[-4:] != ".pdb":
             continue
-        print(file)
+        print(f"Current PDB file name: {file}")
         pdb_file = os.path.join(file_path,file)
         pc_array = convert_pdb_to_np_array_point_cloud(pdb_file)
         numpy_pc_path = os.path.join(pc_file_path, file[:-4]+".npy")
-        np.save(numpy_pc_path, filename)
-
+        np.save(numpy_pc_path, pc_array)
