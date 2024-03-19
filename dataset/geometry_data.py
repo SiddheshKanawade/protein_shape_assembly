@@ -131,6 +131,11 @@ class GeometryPartDataset(Dataset):
             trimesh.sample.sample_surface(mesh, self.num_points)[0]
             for mesh in meshes
         ]
+        print(f"Printing PCs")
+        for pc in pcs:
+            print(type(pc))
+            # print(pc.shape)
+            print(pc)
         return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):

@@ -19,20 +19,14 @@ class GeometryPartDataset(Dataset):
         data_dir,
         data_fn,
         data_keys,
-        category="all",
         num_points=1000,
-        min_num_part=2,
-        max_num_part=20,
         shuffle_parts=False,
         rot_range=-1,
         overfit=-1,
     ):
         # store parameters
-        self.category = category if category.lower() != "all" else ""
         self.data_dir = data_dir
         self.num_points = num_points
-        self.min_num_part = min_num_part
-        self.max_num_part = max_num_part  # ignore shapes with more parts
         self.shuffle_parts = shuffle_parts  # shuffle part orders
         self.rot_range = rot_range  # rotation range in degree
 
@@ -47,28 +41,14 @@ class GeometryPartDataset(Dataset):
     def _read_data(self, data_fn):
         """Filter out invalid number of parts."""
         with open(os.path.join(self.data_dir, data_fn), "r") as f:
-            mesh_list = [line.strip() for line in f.readlines()]
-            # if self.category:
-            #     mesh_list = [
-            #         line
-            #         for line in mesh_list
-            #         if self.category in line.split("/")
-            #     ]
+            protein_list = [line.strip() for line in f.readlines()]
         data_list = []
-        for mesh in mesh_list:
-            mesh_dir = os.path.join(self.data_dir, mesh)
-            if not os.path.isdir(mesh_dir):
-                print(f"{mesh} does not exist")
+        for protein in protein_list:
+            protein_dir = os.path.join(self.data_dir, protein)
+            if not os.path.isdir(protein_dir):
+                print(f"{protein} does not exist")
                 continue
-            for frac in os.listdir(mesh_dir):
-                # we take both fractures and modes for training
-                if "fractured" not in frac and "mode" not in frac:
-                    continue
-                frac = os.path.join(mesh, frac)
-                num_parts = len(os.listdir(os.path.join(self.data_dir, frac)))
-                if self.min_num_part <= num_parts <= self.max_num_part:
-                    data_list.append(frac)
-                    # set_trace()
+            data_list.append(protein)
         return data_list
 
     @staticmethod
@@ -111,19 +91,16 @@ class GeometryPartDataset(Dataset):
         """Read mesh and sample point cloud from a folder."""
         # `data_folder`: xxx/plate/1d4093ad2dfad9df24be2e4f911ee4af/fractured_0
         data_folder = os.path.join(self.data_dir, data_folder)
-        mesh_files = os.listdir(data_folder)
-        mesh_files.sort()
-        if not self.min_num_part <= len(mesh_files) <= self.max_num_part:
-            raise ValueError
+        protein_fragments = os.listdir(data_folder)
 
         # shuffle part orders
         if self.shuffle_parts:
-            random.shuffle(mesh_files)
+            random.shuffle(protein_fragments)
 
         # read mesh and sample points
         meshes = [
             trimesh.load(os.path.join(data_folder, mesh_file))
-            for mesh_file in mesh_files
+            for mesh_file in protein_fragments
         ]
         pcs = [
             trimesh.sample.sample_surface(mesh, self.num_points)[0]
