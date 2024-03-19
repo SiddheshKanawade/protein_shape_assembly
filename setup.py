@@ -15,6 +15,7 @@ requirements = [
     "black==22.3.0",
     "autoflake==1.4",
     "scipy==1.7.3",
+    "pyuul"
 ]
 
 __version__ = "0.0.1"
