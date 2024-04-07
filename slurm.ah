@@ -1,0 +1,43 @@
+#!/bin/sh
+#SBATCH --job-name=Geometric-Protein-Synthesis-1
+#SBATCH -N 2
+#SBATCH --ntasks=40
+#SBATCH --error=%J.err
+#SBATCH --output=%J.out
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:2
+#SBATCH --time=2:00:00
+
+module load spack/0.17
+source /home/apps/spack/share/spack/setup-env.sh
+spack load cuda@11.3.0
+module load gcc/10.2
+module load DL/conda-python/3.7
+
+echo $SHELL
+conda init bash
+source ~/.bashrc
+conda activate assembly
+python --version
+conda install pytorch==1.10.0 torchvision==0.11.0 torchaudio==0.10.0 cudatoolkit=11.3 -c pytorch -c conda-forge --yes
+echo INSTALLED PYTORCH
+conda install pytorch-lightning
+echo INSTALLED LIGHTNING
+conda install -c fvcore -c iopath -c conda-forge fvcore iopath --yes
+conda install pytorch3d -c pytorch3d --yes
+echo INSTALLED PYTORCH3D
+
+cd ~/siddhesh_mann/geometric_shape_assembly/BreakingBad/
+pip install -e .
+
+cd ~/siddhesh_mann/geometric_shape_assembly/BreakingBad/multi_part_assembly/utils/chamfer
+pip install -e .
+
+cd ~/siddhesh_mann/geometric_shape_assembly/BreakingBad/multi_part_assembly/models/modules/encoder/pointnet2/pointnet2_ops_lib
+pip install -e .
+
+cd ~/siddhesh_mann/geometric_shape_assembly/BreakingBad/
+echo RUNNING SCRIPT
+python scripts/train.py --cfg_file configs/vnn/vnn-everyday.py
+
+wait
