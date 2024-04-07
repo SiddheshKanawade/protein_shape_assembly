@@ -5,7 +5,7 @@ from yacs.config import CfgNode as CN
 
 _base_ = {
     "exp": "../_base_/default_exp.py",
-    "data": "../_base_/datasets/everyday.py",
+    "data": "../_base_/datasets/protein.py",
     "optimizer": "../_base_/schedules/adam_cosine.py",
     "model": "../_base_/models/vnn.py",
     "loss": "../_base_/models/loss/vnn_loss.py",
