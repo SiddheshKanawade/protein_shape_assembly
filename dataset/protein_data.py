@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-import trimesh
+from ..scripts.utils import convert_pdb_to_np_array_point_cloud 
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import DataLoader, Dataset
 
@@ -97,15 +97,11 @@ class GeometryPartDataset(Dataset):
         if self.shuffle_parts:
             random.shuffle(protein_fragments)
 
-        # read mesh and sample points
-        meshes = [
-            trimesh.load(os.path.join(data_folder, mesh_file))
-            for mesh_file in protein_fragments
-        ]
         pcs = [
-            trimesh.sample.sample_surface(mesh, self.num_points)[0]
-            for mesh in meshes
+            convert_pdb_to_np_array_point_cloud(os.path.join(data_folder, protein_fragment))
+            for protein_fragment in protein_fragments
         ]
+
         return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):
