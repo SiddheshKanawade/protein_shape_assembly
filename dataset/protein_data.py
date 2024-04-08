@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-from ...protein_shape_assembly.scripts.utils import convert_pdb_to_np_array_point_cloud 
+from protein_shape_assembly.scripts.utils import convert_pdb_to_np_array_point_cloud 
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import DataLoader, Dataset
 
