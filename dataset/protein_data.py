@@ -20,6 +20,8 @@ class GeometryPartDataset(Dataset):
         data_fn,
         data_keys,
         num_points=1000,
+        max_num_part=45,
+        min_num_part=2,
         shuffle_parts=False,
         rot_range=-1,
         overfit=-1,
@@ -29,6 +31,8 @@ class GeometryPartDataset(Dataset):
         self.num_points = num_points
         self.shuffle_parts = shuffle_parts  # shuffle part orders
         self.rot_range = rot_range  # rotation range in degree
+        self.max_num_part = max_num_part  # ignore shapes with more parts
+        self.min_num_part = min_num_part  # ignore shapes with less parts
 
         # list of fracture folder path
         self.data_list = self._read_data(data_fn)
@@ -191,6 +195,8 @@ def build_geometry_dataloader_protein(cfg):
         data_fn=cfg.data.data_fn.format("train"),
         data_keys=cfg.data.data_keys,
         num_points=cfg.data.num_pc_points,
+        max_num_part=cfg.data.max_num_part,
+        min_num_part=cfg.data.min_num_part,
         shuffle_parts=cfg.data.shuffle_parts,
         rot_range=cfg.data.rot_range,
         overfit=cfg.data.overfit,
