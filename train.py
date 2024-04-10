@@ -108,7 +108,6 @@ def main(cfg):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Training script")
     parser.add_argument("--cfg_file", required=True, type=str, help=".py")
-    parser.add_argument("--category", type=str, default="", help="data subset")
     parser.add_argument("--gpus", nargs="+", default=[0], type=int)
     parser.add_argument("--weight", type=str, default="", help="load weight")
     parser.add_argument("--fp16", action="store_true", help="FP16 training")
@@ -128,8 +127,6 @@ if __name__ == "__main__":
     if len(cfg.exp.gpus) > 1 and parallel_strategy == "dp":
         cfg.exp.batch_size *= len(cfg.exp.gpus)
         cfg.exp.num_workers *= len(cfg.exp.gpus)
-    if args.category:
-        cfg.data.category = args.category
     if args.weight:
         cfg.exp.weight_file = args.weight
 
