@@ -9,7 +9,7 @@ _C.weight_file = ""
 _C.gpus = [0]
 _C.num_workers = 4
 _C.batch_size = 16
-_C.num_epochs = 500
+_C.num_epochs = 10
 _C.val_every = 1  # evaluate model every n training epochs
 _C.val_sample_vis = 5  # sample visualizations
 
