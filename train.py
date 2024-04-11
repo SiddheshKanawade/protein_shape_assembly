@@ -35,11 +35,7 @@ def main(cfg):
             # on my cluster, the temp dir is /checkpoint/$USER/$SLURM_JOB_ID
             # TODO: modify this if your cluster is different
             usr = pwd.getpwuid(os.getuid())[0]
-            os.system(
-                r"ln -s /checkpoint/{}/{}/ {}".format(
-                    usr, SLURM_JOB_ID, ckp_dir
-                )
-            )
+            os.system(r"ln -s /checkpoint/{}/{}/ {}".format(usr, SLURM_JOB_ID, ckp_dir))
     else:
         os.makedirs(ckp_dir, exist_ok=True)
 
