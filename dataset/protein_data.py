@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-import trimesh
+from .pdb_utils import convert_pdb_to_np_array_point_cloud
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import DataLoader, Dataset
 
@@ -20,6 +20,8 @@ class GeometryPartDataset(Dataset):
         data_fn,
         data_keys,
         num_points=1000,
+        max_num_part=45,
+        min_num_part=2,
         shuffle_parts=False,
         rot_range=-1,
         overfit=-1,
@@ -29,6 +31,8 @@ class GeometryPartDataset(Dataset):
         self.num_points = num_points
         self.shuffle_parts = shuffle_parts  # shuffle part orders
         self.rot_range = rot_range  # rotation range in degree
+        self.max_num_part = max_num_part  # ignore shapes with more parts
+        self.min_num_part = min_num_part  # ignore shapes with less parts
 
         # list of fracture folder path
         self.data_list = self._read_data(data_fn)
@@ -97,10 +101,14 @@ class GeometryPartDataset(Dataset):
         if self.shuffle_parts:
             random.shuffle(protein_fragments)
 
-        point_clouds = [np.load(protein_fragment) 
-                        for protein_fragment in protein_fragments]
+        pcs = [
+            convert_pdb_to_np_array_point_cloud(
+                os.path.join(data_folder, protein_fragment)
+            )
+            for protein_fragment in protein_fragments
+        ]
 
-        return np.stack(point_clouds, axis=0)
+        return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):
         pcs = self._get_pcs(self.data_list[index])
@@ -168,9 +176,7 @@ class GeometryPartDataset(Dataset):
                 data_dict["part_ids"] = self._pad_data(cur_part_ids)
 
             elif key == "valid_matrix":
-                out = np.zeros(
-                    (self.max_num_part, self.max_num_part), dtype=np.float32
-                )
+                out = np.zeros((self.max_num_part, self.max_num_part), dtype=np.float32)
                 out[:num_parts, :num_parts] = 1.0
                 data_dict["valid_matrix"] = out
 
@@ -188,10 +194,9 @@ def build_geometry_dataloader_protein(cfg):
         data_dir=cfg.data.data_dir,
         data_fn=cfg.data.data_fn.format("train"),
         data_keys=cfg.data.data_keys,
-        category=cfg.data.category,
         num_points=cfg.data.num_pc_points,
-        min_num_part=cfg.data.min_num_part,
         max_num_part=cfg.data.max_num_part,
+        min_num_part=cfg.data.min_num_part,
         shuffle_parts=cfg.data.shuffle_parts,
         rot_range=cfg.data.rot_range,
         overfit=cfg.data.overfit,
