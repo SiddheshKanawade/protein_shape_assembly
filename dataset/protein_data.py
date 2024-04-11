@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-from .pdb_utils import convert_pdb_to_np_array_point_cloud 
+from .pdb_utils import convert_pdb_to_np_array_point_cloud
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import DataLoader, Dataset
 
@@ -102,7 +102,9 @@ class GeometryPartDataset(Dataset):
             random.shuffle(protein_fragments)
 
         pcs = [
-            convert_pdb_to_np_array_point_cloud(os.path.join(data_folder, protein_fragment))
+            convert_pdb_to_np_array_point_cloud(
+                os.path.join(data_folder, protein_fragment)
+            )
             for protein_fragment in protein_fragments
         ]
 
@@ -174,9 +176,7 @@ class GeometryPartDataset(Dataset):
                 data_dict["part_ids"] = self._pad_data(cur_part_ids)
 
             elif key == "valid_matrix":
-                out = np.zeros(
-                    (self.max_num_part, self.max_num_part), dtype=np.float32
-                )
+                out = np.zeros((self.max_num_part, self.max_num_part), dtype=np.float32)
                 out[:num_parts, :num_parts] = 1.0
                 data_dict["valid_matrix"] = out
 
