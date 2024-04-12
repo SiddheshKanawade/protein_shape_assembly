@@ -16,15 +16,15 @@ class GeometryPartDataset(Dataset):
 
     def __init__(
         self,
-        data_dir,
-        data_fn,
-        data_keys,
-        num_points=1000,
-        max_num_part=45,
-        min_num_part=2,
-        shuffle_parts=False,
-        rot_range=-1,
-        overfit=-1,
+        data_dir,  # protein_data
+        data_fn,  # data_split/train.txt or data_split/val.txt
+        data_keys,  # ('part_ids',)
+        num_points=1000,  # 512
+        max_num_part=45,  # 45
+        min_num_part=2,  # 2
+        shuffle_parts=False,  # True
+        rot_range=-1,  # -1.0
+        overfit=-1,  # -1
     ):
         # store parameters
         self.data_dir = data_dir
@@ -38,7 +38,7 @@ class GeometryPartDataset(Dataset):
         self.data_list = self._read_data(data_fn)
         if overfit > 0:
             self.data_list = self.data_list[:overfit]
-
+        print(self.data_list)
         # additional data to load, e.g. ('part_ids', 'instance_label')
         self.data_keys = data_keys
 
@@ -208,7 +208,9 @@ def build_geometry_dataloader_protein(cfg):
         rot_range=cfg.data.rot_range,
         overfit=cfg.data.overfit,
     )
+
     train_set = GeometryPartDataset(**data_dict)
+
     train_loader = DataLoader(
         dataset=train_set,
         batch_size=cfg.exp.batch_size,
