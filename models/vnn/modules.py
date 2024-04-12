@@ -58,8 +58,8 @@ class VN_DGCNN(pl.LightningModule):
         self.conv1 = VNLinearLeakyReLU(2, 64 // 3)
         self.conv2 = VNLinearLeakyReLU(64 // 3, 64 // 3)
         self.conv3 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
-        self.conv4 = VNLinearLeakyReLU(64 // 3, 64 // 3)
-        self.conv5 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
+        # self.conv4 = VNLinearLeakyReLU(64 // 3, 64 // 3)
+        # self.conv5 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
         self.VnInv = VNStdFeature(2 * feat_dim, dim=3, normalize_frame=False)
 
         if pooling == "max":
@@ -100,11 +100,11 @@ class VN_DGCNN(pl.LightningModule):
 
         x = get_graph_feature(x1, k=self.n_knn)
         x = self.conv3(x)
-        x = self.conv4(x)
+        # x = self.conv4(x)
         x2 = self.pool2(x)
 
         x = get_graph_feature(x2, k=self.n_knn)
-        x = self.conv5(x)
+        # x = self.conv5(x)
         x3 = self.pool3(x)
 
         x123 = torch.cat((x1, x2, x3), dim=1)
