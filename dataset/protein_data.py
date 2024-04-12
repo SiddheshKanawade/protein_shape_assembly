@@ -207,7 +207,7 @@ def build_geometry_dataloader_protein(cfg):
         batch_size=cfg.exp.batch_size,
         shuffle=True,
         num_workers=cfg.exp.num_workers,
-        pin_memory=True,
+        pin_memory=False,
         drop_last=True,
         persistent_workers=(cfg.exp.num_workers > 0),
     )
