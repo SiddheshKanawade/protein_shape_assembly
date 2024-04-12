@@ -60,7 +60,7 @@ def main(cfg):
     all_gpus = list(cfg.exp.gpus)
     print(all_gpus)
     trainer = pl.Trainer(
-        gpus=None,
+        gpus=all_gpus,
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
         max_epochs=cfg.exp.num_epochs,
         callbacks=callbacks,
