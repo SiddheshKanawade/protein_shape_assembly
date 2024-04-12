@@ -111,9 +111,15 @@ class GeometryPartDataset(Dataset):
         return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):
+        print("Index: ", index)
         pcs = self._get_pcs(self.data_list[index])
         num_parts = pcs.shape[0]
-        print("Number of fragments of protein : ", num_parts, pcs.shape)
+        print(
+            "Number of fragments of protein : ",
+            self.data_list[index],
+            num_parts,
+            pcs.shape,
+        )
         cur_pts, cur_quat, cur_trans = [], [], []
         for i in range(num_parts):
             pc = pcs[i]
