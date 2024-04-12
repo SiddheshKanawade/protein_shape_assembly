@@ -113,6 +113,7 @@ class GeometryPartDataset(Dataset):
     def __getitem__(self, index):
         pcs = self._get_pcs(self.data_list[index])
         num_parts = pcs.shape[0]
+        print("Number of fragments of protein : ", num_parts)
         cur_pts, cur_quat, cur_trans = [], [], []
         for i in range(num_parts):
             pc = pcs[i]
@@ -220,7 +221,7 @@ def build_geometry_dataloader_protein(cfg):
         batch_size=cfg.exp.batch_size * 2,
         shuffle=False,
         num_workers=cfg.exp.num_workers,
-        pin_memory=True,
+        pin_memory=False,
         drop_last=False,
         persistent_workers=(cfg.exp.num_workers > 0),
     )
