@@ -6,7 +6,7 @@ from yacs.config import CfgNode as CN
 _C = CN()
 _C.ckp_dir = "checkpoint/"
 _C.weight_file = ""
-_C.gpus = [0]
+_C.gpus = [0, 1]
 _C.num_workers = 4
 _C.batch_size = 16
 _C.num_epochs = 1
