@@ -10,7 +10,7 @@ def convert_pdb_to_np_array_point_cloud(filepath_pdb):
     )  # calculates the corresponding channel of each atom
     radius = utils.atomlistToRadius(atname)  # calculates the radius of each atom
 
-    device = "cpu"  # gpu runs the volumes on GPU (you need a cuda-compatible GPU computer for this)
+    device = "cuda"  # gpu runs the volumes on GPU (you need a cuda-compatible GPU computer for this)
     PointCloudVolumeObject = VolumeMaker.PointCloudSurface(device=device)
 
     coords = coords.to(device)
