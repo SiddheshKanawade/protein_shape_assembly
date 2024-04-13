@@ -6,7 +6,7 @@ pc = "protein_extracted/1a6f/1a6f_94_108.npy"
 # Load your point cloud data
 point_cloud = np.load(pc)
 print(point_cloud)
-# Create a Trimesh object
+#Create a Trimesh object
 # mesh = trimesh.Trimesh(vertices=point_cloud)
 
 # mesh.export("output_model.obj")

@@ -186,6 +186,7 @@ class GeometryPartDataset(Dataset):
         return data_dict
 
     def __len__(self):
+        print("Length of data list is: ", len(self.data_list))
         return len(self.data_list)
 
 
@@ -205,7 +206,7 @@ def build_geometry_dataloader_protein(cfg):
     train_loader = DataLoader(
         dataset=train_set,
         batch_size=cfg.exp.batch_size,
-        shuffle=True,
+        shuffle=False,
         num_workers=cfg.exp.num_workers,
         pin_memory=False,
         drop_last=True,
