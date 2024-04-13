@@ -15,8 +15,8 @@ import math
 # else:
 #     print(f"File not found: {file_path}")
 
-protein_data = '../protein_data'
-file_path = '../protein_data/data_split'
+protein_data = './protein_data'
+file_path = './protein_data/data_split'
 
 if not os.path.exists(file_path):
     os.makedirs(file_path)
@@ -25,10 +25,13 @@ train_file = os.path.join(file_path, 'train.txt')
 val_file = os.path.join(file_path, 'val.txt')
 
 num_samples = len(os.listdir(protein_data))
-
 num_train_samples = math.floor(0.8 * num_samples)
 num_val_samples = num_samples - num_train_samples
 
+with open(train_file, 'w') as f:  
+    pass
+with open(val_file, 'w') as f:  
+    pass
 for i, filename in enumerate(os.listdir(protein_data)):
     if filename == 'data_split':
         continue
