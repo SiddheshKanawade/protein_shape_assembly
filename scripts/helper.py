@@ -24,7 +24,7 @@ if not os.path.exists(file_path):
 train_file = os.path.join(file_path, 'train.txt')
 val_file = os.path.join(file_path, 'val.txt')
 
-num_samples = len(os.listdir(protein_data))
+num_samples = len(os.listdir(protein_data)) - 1
 num_train_samples = math.floor(0.8 * num_samples)
 num_val_samples = num_samples - num_train_samples
 
@@ -33,8 +33,9 @@ with open(train_file, 'w') as f:
 with open(val_file, 'w') as f:  
     pass
 for i, filename in enumerate(os.listdir(protein_data)):
-    if filename == 'data_split':
+    if filename == 'data_split' or filename[-3:] == "tcl" :
         continue
+    print(filename)
     if i < num_train_samples:
         with open(train_file, 'a') as f:
             f.write(filename + '\n')
