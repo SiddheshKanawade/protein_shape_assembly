@@ -60,7 +60,7 @@ def main(cfg):
     all_gpus = list(cfg.exp.gpus)
     print(all_gpus)
     trainer = pl.Trainer(
-        gpus=None,
+        gpus=all_gpus,
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
         max_epochs=cfg.exp.num_epochs,
         callbacks=callbacks,
@@ -96,6 +96,8 @@ def main(cfg):
     else:
         ckp_path = None
 
+    torch.cuda.empty_cache()
+
     trainer.fit(model, train_loader, val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
@@ -116,7 +118,7 @@ if __name__ == "__main__":
     cfg = cfg.get_cfg_defaults()
 
     # TODO: modify this if you cannot run DDP training, and want to use DP
-    parallel_strategy = "ddp"  # 'dp'
+    parallel_strategy = "dp"  # 'dp'
     cfg.exp.gpus = args.gpus
     # manually increase batch_size according to the number of GPUs in DP
     # not necessary in DDP because it's already per-GPU batch size

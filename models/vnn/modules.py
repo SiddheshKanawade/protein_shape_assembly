@@ -25,12 +25,10 @@ def get_graph_feature(x, k=20, idx=None, x_coord=None):
             idx = knn(x, k=k)
         else:  # fixed knn graph with input point coordinates
             idx = knn(x_coord, k=k)
-    #device = torch.device("cuda")
-    device = torch.device("cpu")
+    device = torch.device("cuda")
+    # device = torch.device("cpu")
 
-    idx_base = (
-        torch.arange(0, batch_size, device=device).view(-1, 1, 1) * num_points
-    )
+    idx_base = torch.arange(0, batch_size, device=device).view(-1, 1, 1) * num_points
 
     idx = idx + idx_base
 
@@ -44,9 +42,7 @@ def get_graph_feature(x, k=20, idx=None, x_coord=None):
     feature = feature.view(batch_size, num_points, k, num_dims, 3)
     x = x.view(batch_size, num_points, 1, num_dims, 3).repeat(1, 1, k, 1, 1)
 
-    feature = (
-        torch.cat((feature - x, x), dim=3).permute(0, 3, 4, 1, 2).contiguous()
-    )
+    feature = torch.cat((feature - x, x), dim=3).permute(0, 3, 4, 1, 2).contiguous()
 
     return feature
 
@@ -54,7 +50,7 @@ def get_graph_feature(x, k=20, idx=None, x_coord=None):
 class VN_DGCNN(pl.LightningModule):
     def __init__(self, feat_dim):
         super(VN_DGCNN, self).__init__()
-        self.n_knn = 20
+        self.n_knn = 5
         # num_part = feat_dim  # 原版是做partseg,所以num_part=feat_dim
 
         pooling = "mean"
@@ -62,8 +58,8 @@ class VN_DGCNN(pl.LightningModule):
         self.conv1 = VNLinearLeakyReLU(2, 64 // 3)
         self.conv2 = VNLinearLeakyReLU(64 // 3, 64 // 3)
         self.conv3 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
-        self.conv4 = VNLinearLeakyReLU(64 // 3, 64 // 3)
-        self.conv5 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
+        # self.conv4 = VNLinearLeakyReLU(64 // 3, 64 // 3)
+        # self.conv5 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
         self.VnInv = VNStdFeature(2 * feat_dim, dim=3, normalize_frame=False)
 
         if pooling == "max":
@@ -83,13 +79,17 @@ class VN_DGCNN(pl.LightningModule):
         self.linear0 = nn.Linear(3, 2 * feat_dim)
 
     def forward(self, x):
-
+        print("Printing X in forward")
+        print(x.size())
+        print(x)
         # x: (batch_size, 3, num_points)
         # l: (batch_size, 1, 16)
 
-        batch_size = x.size(0)
+        # batch_size = x.size(0)
+        batch_size = 100
+        print("Batch size", batch_size)
         x.size(2)
-        l = x[:, 0, 0:16].reshape(batch_size, 1, 16)
+        # l = x[:, 0, 0:16].reshape(batch_size, 1, 16)
 
         x = x.unsqueeze(1)  # (32, 1, 3, 1024)
 
@@ -101,11 +101,11 @@ class VN_DGCNN(pl.LightningModule):
 
         x = get_graph_feature(x1, k=self.n_knn)
         x = self.conv3(x)
-        x = self.conv4(x)
+        # x = self.conv4(x)
         x2 = self.pool2(x)
 
         x = get_graph_feature(x2, k=self.n_knn)
-        x = self.conv5(x)
+        # x = self.conv5(x)
         x3 = self.pool3(x)
 
         x123 = torch.cat((x1, x2, x3), dim=1)
