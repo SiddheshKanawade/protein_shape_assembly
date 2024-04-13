@@ -98,7 +98,7 @@ def main(cfg):
 
     torch.cuda.empty_cache()
 
-    trainer.fit(model, train_loader, ckpt_path=ckp_path)
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 
