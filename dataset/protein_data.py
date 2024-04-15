@@ -103,8 +103,6 @@ class GeometryPartDataset(Dataset):
         # shuffle part orders
         if self.shuffle_parts:
             random.shuffle(protein_fragments)
-            
-        print("Protein Fragments: ", protein_fragments)
         # pcs = [
         #     convert_pdb_to_np_array_point_cloud(
         #         os.path.join(data_folder, protein_fragment)
