@@ -113,7 +113,7 @@ class GeometryPartDataset(Dataset):
         # ]
 
         pcs = [
-            np.load(protein_fragment)
+            np.load(os.path.join(data_folder, protein_fragment))
             for protein_fragment in protein_fragments
         ]
 
