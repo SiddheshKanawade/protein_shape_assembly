@@ -15,8 +15,8 @@ import math
 # else:
 #     print(f"File not found: {file_path}")
 
-protein_data = './protein_data'
-file_path = './protein_data/data_split'
+protein_data = '../protein_extracted'
+file_path = '../protein_data/data_split'
 
 if not os.path.exists(file_path):
     os.makedirs(file_path)
