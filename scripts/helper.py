@@ -15,8 +15,8 @@ import math
 # else:
 #     print(f"File not found: {file_path}")
 
-protein_extract = '../protein_extracted'
-file_path = '../protein_data/data_split'
+protein_extract = './protein_extracted'
+file_path = './protein_data/data_split'
 
 if not os.path.exists(file_path):
     os.makedirs(file_path)
@@ -43,3 +43,4 @@ for i, filename in enumerate(os.listdir(protein_extract)):
     else:
         with open(val_file, 'a') as f:
             f.write(filename + '\n')
+            

@@ -98,11 +98,13 @@ class GeometryPartDataset(Dataset):
         # `data_folder`: xxx/plate/1d4093ad2dfad9df24be2e4f911ee4af/fractured_0
         data_folder = os.path.join(self.data_extract, data_folder)
         protein_fragments = os.listdir(data_folder)
+        
 
         # shuffle part orders
         if self.shuffle_parts:
             random.shuffle(protein_fragments)
-
+            
+        print("Protein Fragments: ", protein_fragments)
         # pcs = [
         #     convert_pdb_to_np_array_point_cloud(
         #         os.path.join(data_folder, protein_fragment)
