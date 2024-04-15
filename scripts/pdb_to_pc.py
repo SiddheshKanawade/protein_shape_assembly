@@ -2,8 +2,8 @@ import os
 import numpy as np
 from utils import convert_pdb_to_np_array_point_cloud
 
-pdb_data_dir = "./protein_data/"
-pc_data_dir ="./protein_extracted/"
+pdb_data_dir = "../protein_data/"
+pc_data_dir ="../protein_extracted/"
 
 if not os.path.exists(pc_data_dir):
     os.makedirs(pc_data_dir)
