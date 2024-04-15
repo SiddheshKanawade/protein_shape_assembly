@@ -16,7 +16,8 @@ class GeometryPartDataset(Dataset):
 
     def __init__(
         self,
-        data_dir,  # protein_data
+        data_dir, 
+        data_extract, # protein_data
         data_fn,  # data_split/train.txt or data_split/val.txt
         data_keys,  # ('part_ids',)
         num_points=1000,  # 512
@@ -28,6 +29,7 @@ class GeometryPartDataset(Dataset):
     ):
         # store parameters
         self.data_dir = data_dir
+        self.data_extract = data_extract
         self.num_points = num_points
         self.shuffle_parts = shuffle_parts  # shuffle part orders
         self.rot_range = rot_range  # rotation range in degree
@@ -94,17 +96,22 @@ class GeometryPartDataset(Dataset):
     def _get_pcs(self, data_folder):
         """Read mesh and sample point cloud from a folder."""
         # `data_folder`: xxx/plate/1d4093ad2dfad9df24be2e4f911ee4af/fractured_0
-        data_folder = os.path.join(self.data_dir, data_folder)
+        data_folder = os.path.join(self.data_extract, data_folder)
         protein_fragments = os.listdir(data_folder)
 
         # shuffle part orders
         if self.shuffle_parts:
             random.shuffle(protein_fragments)
 
+        # pcs = [
+        #     convert_pdb_to_np_array_point_cloud(
+        #         os.path.join(data_folder, protein_fragment)
+        #     )
+        #     for protein_fragment in protein_fragments
+        # ]
+
         pcs = [
-            convert_pdb_to_np_array_point_cloud(
-                os.path.join(data_folder, protein_fragment)
-            )
+            np.load(protein_fragment)
             for protein_fragment in protein_fragments
         ]
 
@@ -200,6 +207,7 @@ class GeometryPartDataset(Dataset):
 def build_geometry_dataloader_protein(cfg):
     data_dict = dict(
         data_dir=cfg.data.data_dir,
+        data_extract=cfg.data.data_extract,
         data_fn=cfg.data.data_fn.format("train"),
         data_keys=cfg.data.data_keys,
         num_points=cfg.data.num_pc_points,

@@ -99,7 +99,7 @@ def main(cfg):
     torch.cuda.empty_cache()
 
     trainer.fit(model, train_dataloaders = train_loader, ckpt_path=ckp_path)
-    trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
+    #trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 
