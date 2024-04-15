@@ -37,7 +37,7 @@ for i, filename in enumerate(os.listdir(protein_extract)):
     if filename == 'data_split' or filename[-3:] == "tcl" :
         continue
     print(filename)
-    if i <= num_train_samples:
+    if i < num_train_samples:
         with open(train_file, 'a') as f:
             f.write(filename + '\n')
     else:
