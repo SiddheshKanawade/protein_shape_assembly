@@ -138,6 +138,12 @@ class GeometryPartDataset(Dataset):
         cur_pts = self._pad_data(np.stack(cur_pts, axis=0))  # [P, N, 3]
         cur_quat = self._pad_data(np.stack(cur_quat, axis=0))  # [P, 4]
         cur_trans = self._pad_data(np.stack(cur_trans, axis=0))  # [P, 3]
+
+
+        print("Shape of cur_pts: ", len(cur_pts))
+        print("Shape of cur_quat: ", len(cur_quat))
+        print("Shape of cur_trans", len(cur_trans))
+
         """
         data_dict = {
             'part_pcs': MAX_NUM x N x 3
