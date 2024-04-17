@@ -16,8 +16,8 @@ class GeometryPartDataset(Dataset):
 
     def __init__(
         self,
-        data_dir, 
-        data_extract, # protein_data
+        data_dir,
+        data_extract,  # protein_data
         data_fn,  # data_split/train.txt or data_split/val.txt
         data_keys,  # ('part_ids',)
         num_points=1000,  # 512
@@ -98,7 +98,6 @@ class GeometryPartDataset(Dataset):
         # `data_folder`: xxx/plate/1d4093ad2dfad9df24be2e4f911ee4af/fractured_0
         data_folder = os.path.join(self.data_extract, data_folder)
         protein_fragments = os.listdir(data_folder)
-        
 
         # shuffle part orders
         if self.shuffle_parts:
@@ -114,6 +113,7 @@ class GeometryPartDataset(Dataset):
             np.load(os.path.join(data_folder, protein_fragment))
             for protein_fragment in protein_fragments
         ]
+        print("Number of fragments: ", pcs)
 
         return np.stack(pcs, axis=0)
 
@@ -205,6 +205,7 @@ class GeometryPartDataset(Dataset):
         return data_dict
 
     def __len__(self):
+        print("Data List: ", self.data_list)
         print("Length of data list is: ", len(self.data_list))
         return len(self.data_list)
 
@@ -235,17 +236,17 @@ def build_geometry_dataloader_protein(cfg):
         persistent_workers=(cfg.exp.num_workers > 0),
     )
     print("Len of Train Loader: ", len(train_loader))
-    data_dict["data_fn"] = cfg.data.data_fn.format("val")
-    data_dict["shuffle_parts"] = False
-    val_set = GeometryPartDataset(**data_dict)
-    val_loader = DataLoader(
-        dataset=val_set,
-        batch_size=cfg.exp.batch_size,
-        shuffle=False,
-        num_workers=cfg.exp.num_workers,
-        pin_memory=False,
-        drop_last=False,
-        persistent_workers=(cfg.exp.num_workers > 0),
-    )
-    print("Len of Val Loader: ", len(val_loader))
-    return train_loader, val_loader
+    # data_dict["data_fn"] = cfg.data.data_fn.format("val")
+    # data_dict["shuffle_parts"] = False
+    # val_set = GeometryPartDataset(**data_dict)
+    # val_loader = DataLoader(
+    #     dataset=val_set,
+    #     batch_size=cfg.exp.batch_size,
+    #     shuffle=False,
+    #     num_workers=cfg.exp.num_workers,
+    #     pin_memory=False,
+    #     drop_last=False,
+    #     persistent_workers=(cfg.exp.num_workers > 0),
+    # )
+    # print("Len of Val Loader: ", len(val_loader))
+    return train_loader

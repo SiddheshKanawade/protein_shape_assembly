@@ -17,7 +17,7 @@ def main(cfg):
     model = build_model(cfg)
 
     # Initialize dataloaders
-    train_loader, val_loader = build_dataloader(cfg)
+    train_loader = build_dataloader(cfg)
 
     # Create checkpoint directory
     SLURM_JOB_ID = os.environ.get("SLURM_JOB_ID")
@@ -98,8 +98,8 @@ def main(cfg):
 
     torch.cuda.empty_cache()
 
-    trainer.fit(model, train_dataloaders = train_loader, ckpt_path=ckp_path)
-    #trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
+    trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
+    # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 
