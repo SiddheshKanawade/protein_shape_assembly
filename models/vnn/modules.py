@@ -85,8 +85,8 @@ class VN_DGCNN(pl.LightningModule):
         # x: (batch_size, 3, num_points)
         # l: (batch_size, 1, 16)
 
-        # batch_size = x.size(0)
-        batch_size = 100
+        batch_size = x.size(0)
+        #batch_size = 100
         print("Batch size", batch_size)
         x.size(2)
         # l = x[:, 0, 0:16].reshape(batch_size, 1, 16)
