@@ -2,15 +2,16 @@ import copy
 
 import torch
 import torch.nn.functional as F
-from multi_part_assembly.models import BaseModel
-from multi_part_assembly.utils import (
+from pointnet2_ops import pointnet2_utils
+
+from models import BaseModel
+from utils import (
     Rotation3D,
     _valid_mean,
     chamfer_distance,
     shape_cd_loss,
     transform_pc,
 )
-from pointnet2_ops import pointnet2_utils
 
 from .dgcnn import DGCNN_New
 from .modules import *

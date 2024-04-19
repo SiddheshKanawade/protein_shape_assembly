@@ -4,7 +4,7 @@ from yacs.config import CfgNode as CN
 
 _C = CN()
 _C.dataset = "geometry"
-_C.data_dir = "multi_part_assembly/data"
+_C.data_dir = "data"
 _C.data_fn = "data_split/everyday.{}.txt"
 _C.data_keys = ("part_ids",)
 _C.category = "BeerBottle"  # empty means all categories

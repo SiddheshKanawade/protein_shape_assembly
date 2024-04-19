@@ -69,6 +69,8 @@ class GeometryPartDataset(Dataset):
                 if self.min_num_part <= num_parts <= self.max_num_part:
                     data_list.append(frac)
                     # set_trace()
+        print("Changes in data list")
+        print(data_list)
         return data_list
 
     @staticmethod
@@ -129,6 +131,11 @@ class GeometryPartDataset(Dataset):
             trimesh.sample.sample_surface(mesh, self.num_points)[0]
             for mesh in meshes
         ]
+        print(f"Printing PCs")
+        for pc in pcs:
+            print(type(pc))
+            # print(pc.shape)
+            print(pc)
         return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):

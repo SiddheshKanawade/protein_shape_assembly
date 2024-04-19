@@ -1,6 +1,4 @@
-import numpy as np
 import torch
-import wandb
 from pytorch_lightning import Callback
 
 
@@ -25,13 +23,12 @@ class PCAssemblyLogCallback(Callback):
             gt_pcs[i][:, 0] = gt_pcs[i][:, 0] + 1.5
             for j in range(len(pred_pcs[0])):
                 pred_pcs[i][j][:, 0] = pred_pcs[i][j][:, 0] - 1.5 * j
-        log_dict = {
-            f"{split}_pc_{i}": wandb.Object3D(
-                np.concatenate([gt_pcs[i], *pred_pcs[i]], axis=0)
-            )
-            for i in range(num)
-        }
-        trainer.logger.experiment.log(log_dict, commit=True)
+
+        print(f"{split} part poses:")
+        for i in range(num):
+            print(f"Part {i}:")
+            print(f"GT: {gt_pcs[i]}")
+            print(f"Predicted: {pred_pcs[i]}")
 
     @torch.no_grad()
     def on_validation_epoch_end(self, trainer, pl_module):

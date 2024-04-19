@@ -17,7 +17,7 @@ def main(cfg):
     model = build_model(cfg)
 
     # Initialize dataloaders
-    train_loader, val_loader = build_dataloader(cfg)
+    train_loader = build_dataloader(cfg)
 
     # Create checkpoint directory
     SLURM_JOB_ID = os.environ.get("SLURM_JOB_ID")
@@ -35,11 +35,7 @@ def main(cfg):
             # on my cluster, the temp dir is /checkpoint/$USER/$SLURM_JOB_ID
             # TODO: modify this if your cluster is different
             usr = pwd.getpwuid(os.getuid())[0]
-            os.system(
-                r"ln -s /checkpoint/{}/{}/ {}".format(
-                    usr, SLURM_JOB_ID, ckp_dir
-                )
-            )
+            os.system(r"ln -s /checkpoint/{}/{}/ {}".format(usr, SLURM_JOB_ID, ckp_dir))
     else:
         os.makedirs(ckp_dir, exist_ok=True)
 
@@ -62,6 +58,7 @@ def main(cfg):
     #     callbacks.append(assembly_callback)
 
     all_gpus = list(cfg.exp.gpus)
+    print(all_gpus)
     trainer = pl.Trainer(
         gpus=all_gpus,
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
@@ -99,7 +96,10 @@ def main(cfg):
     else:
         ckp_path = None
 
-    trainer.fit(model, train_loader, val_loader, ckpt_path=ckp_path)
+    torch.cuda.empty_cache()
+
+    trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
+    # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 
@@ -107,7 +107,6 @@ def main(cfg):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Training script")
     parser.add_argument("--cfg_file", required=True, type=str, help=".py")
-    parser.add_argument("--category", type=str, default="", help="data subset")
     parser.add_argument("--gpus", nargs="+", default=[0], type=int)
     parser.add_argument("--weight", type=str, default="", help="load weight")
     parser.add_argument("--fp16", action="store_true", help="FP16 training")
@@ -120,15 +119,13 @@ if __name__ == "__main__":
     cfg = cfg.get_cfg_defaults()
 
     # TODO: modify this if you cannot run DDP training, and want to use DP
-    parallel_strategy = "ddp"  # 'dp'
+    parallel_strategy = "dp"  # 'dp'
     cfg.exp.gpus = args.gpus
     # manually increase batch_size according to the number of GPUs in DP
     # not necessary in DDP because it's already per-GPU batch size
     if len(cfg.exp.gpus) > 1 and parallel_strategy == "dp":
         cfg.exp.batch_size *= len(cfg.exp.gpus)
         cfg.exp.num_workers *= len(cfg.exp.gpus)
-    if args.category:
-        cfg.data.category = args.category
     if args.weight:
         cfg.exp.weight_file = args.weight
 
