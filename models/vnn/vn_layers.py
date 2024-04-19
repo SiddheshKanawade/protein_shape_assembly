@@ -205,8 +205,9 @@ class VNMaxPool(pl.LightningModule):
         return x_max
 
 
-def mean_pool(x, dim=-1, keepdim=False):
-    return x.mean(dim=dim, keepdim=keepdim)
+def mean_pool(x, dim=-1, keepdim = False):
+    print(x.mean(dim=dim,keepdim = False).size())
+    return x.mean(dim=dim, keepdim=False)
 
 
 class VNStdFeature(pl.LightningModule):

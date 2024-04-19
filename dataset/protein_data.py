@@ -139,9 +139,9 @@ class GeometryPartDataset(Dataset):
         cur_quat = self._pad_data(np.stack(cur_quat, axis=0))  # [P, 4]
         cur_trans = self._pad_data(np.stack(cur_trans, axis=0))  # [P, 3]
 
-        #print("Shape of cur_pts: ", cur_pts.shape)
-        #print("Shape of cur_quat: ", cur_quat.shape)
-        #print("Shape of cur_trans", cur_trans.shape)
+        print("Shape of cur_pts: ", cur_pts.shape)
+        print("Shape of cur_quat: ", cur_quat.shape)
+        print("Shape of cur_trans", cur_trans.shape)
 
         """
         data_dict = {

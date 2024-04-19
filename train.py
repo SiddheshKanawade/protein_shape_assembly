@@ -97,6 +97,7 @@ def main(cfg):
         ckp_path = None
 
     torch.cuda.empty_cache()
+    _ = [print(f'GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB') for i in range(torch.cuda.device_count())]
 
     trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
     # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
