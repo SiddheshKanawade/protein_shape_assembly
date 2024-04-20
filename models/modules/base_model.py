@@ -48,9 +48,7 @@ class BaseModel(pl.LightningModule):
             zero_pose[..., 4] = 1.0
             self.zero_pose = zero_pose
         else:
-            raise NotImplementedError(
-                f"rotation {self.rot_type} is not supported"
-            )
+            raise NotImplementedError(f"rotation {self.rot_type} is not supported")
 
         # data related
         self.semantic = self.cfg.data.dataset != "geometry"
@@ -67,6 +65,8 @@ class BaseModel(pl.LightningModule):
         """Forward pass to predict poses for each part."""
 
     def training_step(self, data_dict, batch_idx, optimizer_idx=-1):
+        print(f"Batch {batch_idx}")
+        print(f"Datadict: {data_dict}")
         loss_dict = self.forward_pass(
             data_dict, mode="train", optimizer_idx=optimizer_idx
         )
@@ -77,21 +77,17 @@ class BaseModel(pl.LightningModule):
     def validation_step(self, data_dict, batch_idx):
         loss_dict = self.forward_pass(data_dict, mode="val", optimizer_idx=-1)
         print("Validation loss: ", loss_dict)
-        #self.log('val/loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-        #self.log('val/part_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        # self.log('val/loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        # self.log('val/part_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss_dict
 
     def validation_epoch_end(self, outputs):
         # avg_loss among all data
         # we need to consider different batch_size
         func = (
-            torch.tensor
-            if isinstance(outputs[0]["batch_size"], int)
-            else torch.stack
+            torch.tensor if isinstance(outputs[0]["batch_size"], int) else torch.stack
         )
-        batch_sizes = func(
-            [output.pop("batch_size") for output in outputs]
-        ).type_as(
+        batch_sizes = func([output.pop("batch_size") for output in outputs]).type_as(
             outputs[0]["loss"]
         )  # [num_batches]
         losses = {
@@ -99,8 +95,7 @@ class BaseModel(pl.LightningModule):
             for k in outputs[0].keys()
         }  # each is [num_batches], stacked avg loss in each batch
         avg_loss = {
-            k: (v * batch_sizes).sum() / batch_sizes.sum()
-            for k, v in losses.items()
+            k: (v * batch_sizes).sum() / batch_sizes.sum() for k, v in losses.items()
         }
         self.log_dict(avg_loss, sync_dist=True)
 
@@ -117,9 +112,7 @@ class BaseModel(pl.LightningModule):
         else:
             func_bs = torch.cat
             func_loss = torch.cat
-        batch_sizes = func_bs(
-            [output.pop("batch_size") for output in outputs]
-        ).type_as(
+        batch_sizes = func_bs([output.pop("batch_size") for output in outputs]).type_as(
             outputs[0]["loss"]
         )  # [num_batches]
         losses = {
@@ -127,8 +120,7 @@ class BaseModel(pl.LightningModule):
             for k in outputs[0].keys()
         }  # each is [num_batches], stacked avg loss in each batch
         avg_loss = {
-            k: (v * batch_sizes).sum() / batch_sizes.sum()
-            for k, v in losses.items()
+            k: (v * batch_sizes).sum() / batch_sizes.sum() for k, v in losses.items()
         }
         print("; ".join([f"{k}: {v.item():.6f}" for k, v in avg_loss.items()]))
         # this is a hack to get results outside `Trainer.test()` function
@@ -168,12 +160,10 @@ class BaseModel(pl.LightningModule):
                 for k in self.trainer.profiler.recorded_durations.keys()
                 if "prepare_data" in k
             ][0]
-            log_dict[
-                f"{mode}/data_time"
-            ] = self.trainer.profiler.recorded_durations[data_name][-1]
-            self.log_dict(
-                log_dict, logger=True, sync_dist=False, rank_zero_only=True
-            )
+            log_dict[f"{mode}/data_time"] = self.trainer.profiler.recorded_durations[
+                data_name
+            ][-1]
+            self.log_dict(log_dict, logger=True, sync_dist=False, rank_zero_only=True)
 
         return loss_dict
 
@@ -209,9 +199,7 @@ class BaseModel(pl.LightningModule):
         return rind, cind
 
     @torch.no_grad()
-    def _match_parts(
-        self, part_pcs, pred_trans, pred_rot, gt_trans, gt_rot, match_ids
-    ):
+    def _match_parts(self, part_pcs, pred_trans, pred_rot, gt_trans, gt_rot, match_ids):
         """Used in semantic assembly. Match GT to predictions.
 
         Args:
@@ -338,9 +326,7 @@ class BaseModel(pl.LightningModule):
 
         # some specific evaluation metrics calculated in eval
         if not self.training:
-            eval_dict = self._calc_metrics(
-                data_dict, out_dict, new_trans, new_rot
-            )
+            eval_dict = self._calc_metrics(data_dict, out_dict, new_trans, new_rot)
             loss_dict.update(eval_dict)
 
         # return some intermediate variables for reusing
@@ -419,18 +405,14 @@ class BaseModel(pl.LightningModule):
             # we may log some other metrics in eval, e.g. acc
             # exclude them from loss computation
             if k.endswith("_loss"):
-                total_loss += v * eval(
-                    f"self.cfg.loss.{k}_w"
-                )  # weightingloss_function
+                total_loss += v * eval(f"self.cfg.loss.{k}_w")  # weightingloss_function
         loss_dict["loss"] = total_loss
 
         # `total_loss` is of shape [sample_iter, B]
         min_idx = total_loss.argmin(0)  # [B]
         B = min_idx.shape[0]
         batch_idx = torch.arange(B).type_as(min_idx)
-        loss_dict = {
-            k: v[min_idx, batch_idx].mean() for k, v in loss_dict.items()
-        }
+        loss_dict = {k: v[min_idx, batch_idx].mean() for k, v in loss_dict.items()}
 
         # log the batch_size for avg_loss computation
         if not self.training:
@@ -486,9 +468,9 @@ class BaseModel(pl.LightningModule):
         """Sample assembly for visualization."""
         if "part_rot" not in data_dict:
             part_quat = data_dict.pop("part_quat")
-            data_dict["part_rot"] = Rotation3D(
-                part_quat, rot_type="quat"
-            ).convert(self.rot_type)
+            data_dict["part_rot"] = Rotation3D(part_quat, rot_type="quat").convert(
+                self.rot_type
+            )
         part_pcs, valids = data_dict["part_pcs"], data_dict["part_valids"]
         gt_trans, gt_rot = data_dict["part_trans"], data_dict["part_rot"]
         sample_pred_pcs = []
