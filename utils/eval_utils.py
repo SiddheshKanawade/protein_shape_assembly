@@ -37,7 +37,7 @@ def calc_part_acc(pts, trans1, trans2, rot1, rot2, valids):
     loss_per_data = loss_per_data.view(B, P).type_as(pts)
 
     # part with CD < `thre` is considered correct
-    thre = 0.1
+    thre = 100
     acc = (loss_per_data < thre) & (valids == 1)
     # the official code is doing avg per-shape acc (not per-part)
     acc = acc.sum(-1) / (valids == 1).sum(-1)
