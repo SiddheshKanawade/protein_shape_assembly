@@ -249,4 +249,4 @@ def build_geometry_dataloader_protein(cfg):
         persistent_workers=(cfg.exp.num_workers > 0),
     )
     print("Len of Val Loader: ", len(val_loader))
-    return train_loader
+    return train_loader, val_loader

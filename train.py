@@ -17,7 +17,7 @@ def main(cfg):
     model = build_model(cfg)
 
     # Initialize dataloaders
-    train_loader = build_dataloader(cfg)
+    train_loader, _ = build_dataloader(cfg)
 
     # Create checkpoint directory
     SLURM_JOB_ID = os.environ.get("SLURM_JOB_ID")
