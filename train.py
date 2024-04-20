@@ -41,7 +41,8 @@ def main(cfg):
     # configure callbacks
     print("Checkpoint dir: ", ckp_dir)
     checkpoint_callback = ModelCheckpoint(
-        dirpath=ckp_dir,
+        # dirpath=ckp_dir,
+        dirpath="~/siddhesh_mann/",
         filename="model-{epoch:03d}",
         save_top_k=-1,
         mode="max",
@@ -77,7 +78,7 @@ def main(cfg):
         precision=16 if args.fp16 else 32,  # FP16 training
         benchmark=args.cudnn,  # cudnn benchmark
         gradient_clip_val=cfg.optimizer.clip_grad,  # clip grad norm
-        check_val_every_n_epoch=cfg.exp.val_every,
+        # check_val_every_n_epoch=cfg.exp.val_every,
         log_every_n_steps=1,
         profiler="simple",  # training time bottleneck analysis
         # detect_anomaly=True,  # for debug
