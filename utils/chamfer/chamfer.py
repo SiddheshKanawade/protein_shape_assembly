@@ -2,36 +2,36 @@ import chamfer_cuda
 import torch
 from torch.cuda.amp import custom_bwd, custom_fwd
 
+from test_chamfer import test_chamfer_cpu
+
 
 def safe_sqrt(x, eps=1e-12):
     return torch.sqrt(torch.clamp(x, eps))
 
 
-class ChamferDistanceFunction(torch.autograd.Function):
-    @staticmethod
-    @custom_fwd(cast_inputs=torch.float32)
-    def forward(ctx, xyz1, xyz2):
-        xyz1 = xyz1.contiguous()
-        xyz2 = xyz2.contiguous()
-        assert xyz1.is_cuda and xyz2.is_cuda, "Only support cuda currently."
+# class ChamferDistanceFunction(torch.autograd.Function):
+#     @staticmethod
+#     @custom_fwd(cast_inputs=torch.float32)
+#     def forward(ctx, xyz1, xyz2):
+#         xyz1 = xyz1.contiguous()
+#         xyz2 = xyz2.contiguous()
+#         assert xyz1.is_cuda and xyz2.is_cuda, "Only support cuda currently."
 
-        dist1, idx1, dist2, idx2 = chamfer_cuda.chamfer_forward(xyz1, xyz2)
-        ctx.save_for_backward(xyz1, xyz2, idx1, idx2)
-        return dist1, dist2
+#         dist1, idx1, dist2, idx2 = chamfer_cuda.chamfer_forward(xyz1, xyz2)
+#         ctx.save_for_backward(xyz1, xyz2, idx1, idx2)
+#         return dist1, dist2
 
-    @staticmethod
-    @custom_bwd
-    def backward(ctx, grad_dist1, grad_dist2):
-        xyz1, xyz2, idx1, idx2 = ctx.saved_tensors
-        grad_dist1 = grad_dist1.contiguous()
-        grad_dist2 = grad_dist2.contiguous()
-        assert (
-            grad_dist1.is_cuda and grad_dist2.is_cuda
-        ), "Only support cuda currently."
-        grad_xyz1, grad_xyz2 = chamfer_cuda.chamfer_backward(
-            grad_dist1, grad_dist2, xyz1, xyz2, idx1, idx2
-        )
-        return grad_xyz1, grad_xyz2
+#     @staticmethod
+#     @custom_bwd
+#     def backward(ctx, grad_dist1, grad_dist2):
+#         xyz1, xyz2, idx1, idx2 = ctx.saved_tensors
+#         grad_dist1 = grad_dist1.contiguous()
+#         grad_dist2 = grad_dist2.contiguous()
+#         assert grad_dist1.is_cuda and grad_dist2.is_cuda, "Only support cuda currently."
+#         grad_xyz1, grad_xyz2 = chamfer_cuda.chamfer_backward(
+#             grad_dist1, grad_dist2, xyz1, xyz2, idx1, idx2
+#         )
+#         return grad_xyz1, grad_xyz2
 
 
 def chamfer_distance(xyz1, xyz2, transpose=False, sqrt=False, eps=1e-12):
@@ -58,7 +58,8 @@ def chamfer_distance(xyz1, xyz2, transpose=False, sqrt=False, eps=1e-12):
     if transpose:
         xyz1 = xyz1.transpose(1, 2)
         xyz2 = xyz2.transpose(1, 2)
-    dist1, dist2 = ChamferDistanceFunction.apply(xyz1, xyz2)
+    # dist1, dist2 = ChamferDistanceFunction.apply(xyz1, xyz2)
+    dist1, dist2 = test_chamfer_cpu(xyz1, xyz2)
     if sqrt:
         dist1 = safe_sqrt(dist1, eps)
         dist2 = safe_sqrt(dist2, eps)

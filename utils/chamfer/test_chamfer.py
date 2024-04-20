@@ -30,18 +30,18 @@ def nn_distance_torch(xyz1, xyz2, data_format="NWC"):
     return dist1, idx1, dist2, idx2
 
 
-def test_chamfer_cpu():
+def test_chamfer_cpu(xyz1, xyz2):
     # ---------------------------------------------------------------------------- #
     # NWC format
     # ---------------------------------------------------------------------------- #
-    batch_size = 32
-    num_points = 2048
-    xyz1 = torch.rand(batch_size, num_points, 3).float()
-    xyz2 = torch.rand(batch_size, num_points, 3).float()
+    # batch_size = 32
+    # num_points = 2048
+    # xyz1 = torch.rand(batch_size, num_points, 3).float()
+    # xyz2 = torch.rand(batch_size, num_points, 3).float()
     # xyz1 = torch.tensor([[[0, 0, 1], [1, 0, 0]]]).float()
     # xyz2 = torch.tensor([[[0, 0, 1.1], [1.2, 0, 0]]]).float()
-    print(xyz1.device, xyz1.shape)
-    print(xyz2.device, xyz2.shape)
+    # print(xyz1.device, xyz1.shape)
+    # print(xyz2.device, xyz2.shape)
     # print(xyz1.device, xyz2.device)
 
     # check forward
@@ -53,6 +53,8 @@ def test_chamfer_cpu():
     ) = nn_distance_torch(xyz1, xyz2, "NWC")
     print(dist1_desired.device, dist1_desired.shape)
     print(dist2_desired.device, dist2_desired.shape)
+
+    return dist1_desired, dist2_desired
 
 
 def test_chamfer():
@@ -83,9 +85,7 @@ def test_chamfer():
     np.testing.assert_allclose(
         dist1_actual.cpu().numpy(), dist1_desired.cpu().numpy(), atol=1e-6
     )
-    np.testing.assert_equal(
-        idx1_actual.cpu().numpy(), idx1_desired.cpu().numpy()
-    )
+    np.testing.assert_equal(idx1_actual.cpu().numpy(), idx1_desired.cpu().numpy())
     # torch built-in
     assert dist2_desired.allclose(dist2_actual)
     assert idx2_desired.equal(idx2_actual)
@@ -140,9 +140,7 @@ def test_chamfer():
     np.testing.assert_allclose(
         dist1_actual.cpu().numpy(), dist1_desired.cpu().numpy(), atol=1e-6
     )
-    np.testing.assert_equal(
-        idx1_actual.cpu().numpy(), idx1_desired.cpu().numpy()
-    )
+    np.testing.assert_equal(idx1_actual.cpu().numpy(), idx1_desired.cpu().numpy())
     # torch built-in
     assert dist2_desired.allclose(dist2_actual)
     assert idx2_desired.equal(idx2_actual)
