@@ -66,7 +66,7 @@ class BaseModel(pl.LightningModule):
 
     def training_step(self, data_dict, batch_idx, optimizer_idx=-1):
         print(f"Batch {batch_idx}")
-        print(f"Datadict: {data_dict}")
+        print(f"Datadict: {data_dict[batch_idx]}")
         loss_dict = self.forward_pass(
             data_dict, mode="train", optimizer_idx=optimizer_idx
         )
