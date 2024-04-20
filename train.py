@@ -23,7 +23,6 @@ def main(cfg):
     SLURM_JOB_ID = os.environ.get("SLURM_JOB_ID")
     cfg_name = os.path.basename(args.cfg_file)[:-3]  # remove '.py'
     ckp_dir = os.path.join(cfg.exp.ckp_dir, cfg_name, "models")
-    print(f"Checkpoint dir: {ckp_dir}")
     os.makedirs(os.path.dirname(ckp_dir), exist_ok=True)
 
     # on clusters, quota under user dir is usually limited
@@ -40,6 +39,7 @@ def main(cfg):
         os.makedirs(ckp_dir, exist_ok=True)
 
     # configure callbacks
+    print("Checkpoint dir: ", ckp_dir)
     checkpoint_callback = ModelCheckpoint(
         dirpath=ckp_dir,
         filename="model-{epoch:03d}",
