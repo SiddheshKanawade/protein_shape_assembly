@@ -15,7 +15,7 @@ import math
 # else:
 #     print(f"File not found: {file_path}")
 
-protein_extract = '../protein_extracted'
+protein_extract = '../protein_extracted_new'
 file_path = '../protein_data/data_split'
 
 if not os.path.exists(file_path):

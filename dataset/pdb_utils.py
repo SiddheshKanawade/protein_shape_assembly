@@ -1,26 +1,42 @@
+import numpy as np
+import torch
 from pyuul import VolumeMaker  # the main PyUUL module
 from pyuul import utils  # the PyUUL utility module
-import numpy as np
 
 
-def convert_pdb_to_np_array_point_cloud(filepath_pdb):
-    coords, atname = utils.parsePDB(filepath_pdb)  # get coordinates and atom names
-    atoms_channel = utils.atomlistToChannels(
-        atname
-    )  # calculates the corresponding channel of each atom
-    radius = utils.atomlistToRadius(atname)  # calculates the radius of each atom
+def farthest_point_sampling(points, num_samples):
+    num_points = points.size(0)
+    centroids = torch.zeros(num_samples, dtype=torch.long)
+    distance = torch.ones(num_points) * 1e10
+    farthest = torch.randint(0, num_points, (1,)).item()
+    for i in range(num_samples):
+        centroids[i] = farthest
+        centroid = points[farthest, :]
+        dist = torch.sum((points - centroid) ** 2, dim=1)
+        mask = dist < distance
+        distance[mask] = dist[mask]
+        farthest = torch.max(distance, -1)[1].item()
+    return points[centroids]
 
-    device = "cuda"  # gpu runs the volumes on GPU (you need a cuda-compatible GPU computer for this)
+
+def convert_pdb_to_np_array_point_cloud(filepath_pdb, num_samples=1000):
+    coords, atname = utils.parsePDB(filepath_pdb)
+    atoms_channel = utils.atomlistToChannels(atname)
+    radius = utils.atomlistToRadius(atname)
+
+    device = "cpu"
     PointCloudVolumeObject = VolumeMaker.PointCloudSurface(device=device)
 
     coords = coords.to(device)
     radius = radius.to(device)
     atoms_channel = atoms_channel.to(device)
 
-    print("Printing coords, radius")
-    print(coords)
-    print(radius)
-
     VolumePointCloud = PointCloudVolumeObject(coords, radius)
     pc_array = np.array(VolumePointCloud)
-    return pc_array
+
+    # Apply Farthest Point Sampling
+    coords_tensor = torch.from_numpy(pc_array).float()
+    sampled_coords_tensor = farthest_point_sampling(coords_tensor, num_samples)
+    sampled_coords = sampled_coords_tensor.numpy()
+
+    return sampled_coords

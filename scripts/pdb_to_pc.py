@@ -1,12 +1,14 @@
 import os
 import numpy as np
-from utils import convert_pdb_to_np_array_point_cloud
+from dataset.pdb_utils import convert_pdb_to_np_array_point_cloud
 
 pdb_data_dir = "../protein_data/"
-pc_data_dir ="../protein_extracted/"
+pc_data_dir ="../protein_extracted_new/"
 
 if not os.path.exists(pc_data_dir):
     os.makedirs(pc_data_dir)
+
+print(len(os.listdir(pdb_data_dir)))
 
 for filename in os.listdir(pdb_data_dir):
     if filename[-4:] == ".tcl":
@@ -21,5 +23,6 @@ for filename in os.listdir(pdb_data_dir):
         print(f"Current PDB file name: {file}")
         pdb_file = os.path.join(file_path,file)
         pc_array = convert_pdb_to_np_array_point_cloud(pdb_file)
+        print(pc_array.shape)
         numpy_pc_path = os.path.join(pc_file_path, file[:-4]+".npy")
         np.save(numpy_pc_path, pc_array)

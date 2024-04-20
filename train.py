@@ -58,9 +58,9 @@ def main(cfg):
     #     callbacks.append(assembly_callback)
 
     all_gpus = list(cfg.exp.gpus)
-    print(all_gpus)
+    print(all_gpus, cfg.exp)
     trainer = pl.Trainer(
-        gpus=all_gpus,
+        gpus=[0,1],
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
         max_epochs=cfg.exp.num_epochs,
         callbacks=callbacks,
@@ -68,7 +68,7 @@ def main(cfg):
         benchmark=args.cudnn,  # cudnn benchmark
         gradient_clip_val=cfg.optimizer.clip_grad,  # clip grad norm
         check_val_every_n_epoch=cfg.exp.val_every,
-        log_every_n_steps=5,
+        log_every_n_steps=1,
         profiler="simple",  # training time bottleneck analysis
         # detect_anomaly=True,  # for debug
     )
@@ -97,9 +97,11 @@ def main(cfg):
         ckp_path = None
 
     torch.cuda.empty_cache()
+    _ = [print(f'GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB') for i in range(torch.cuda.device_count())]
 
+    print(f"This is ckp_path: {ckp_path}")
     trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
-    # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
+    #trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 

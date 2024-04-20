@@ -55,17 +55,17 @@ class VN_DGCNN(pl.LightningModule):
 
         pooling = "mean"
 
-        self.conv1 = VNLinearLeakyReLU(2, 64 // 3)
-        self.conv2 = VNLinearLeakyReLU(64 // 3, 64 // 3)
-        self.conv3 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
-        # self.conv4 = VNLinearLeakyReLU(64 // 3, 64 // 3)
-        # self.conv5 = VNLinearLeakyReLU(64 // 3 * 2, 64 // 3)
+        self.conv1 = VNLinearLeakyReLU(2, 64 // 6)
+        self.conv2 = VNLinearLeakyReLU(64 // 6, 64 // 6)
+        self.conv3 = VNLinearLeakyReLU(64 // 6 * 2, 64 // 6)
+        self.conv4 = VNLinearLeakyReLU(64 // 6, 64 // 6)
+        self.conv5 = VNLinearLeakyReLU(64 // 6 * 2, 64 // 6)
         self.VnInv = VNStdFeature(2 * feat_dim, dim=3, normalize_frame=False)
 
         if pooling == "max":
-            self.pool1 = VNMaxPool(64 // 3)  # max_pooling层没有得到梯度
-            self.pool2 = VNMaxPool(64 // 3)
-            self.pool3 = VNMaxPool(64 // 3)
+            self.pool1 = VNMaxPool(64 // 6)  # max_pooling层没有得到梯度
+            self.pool2 = VNMaxPool(64 // 6)
+            self.pool3 = VNMaxPool(64 // 6)
             self.pool4 = VNMaxPool(2 * feat_dim)
         elif pooling == "mean":
             self.pool1 = mean_pool
@@ -74,46 +74,58 @@ class VN_DGCNN(pl.LightningModule):
             self.pool4 = mean_pool
 
         self.conv6 = VNLinearLeakyReLU(
-            64 // 3 * 3, feat_dim, dim=4, share_nonlinearity=True
+            64 // 6 * 3, feat_dim, dim=4, share_nonlinearity=True
         )
         self.linear0 = nn.Linear(3, 2 * feat_dim)
 
     def forward(self, x):
+        _ = [print(f'GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB') for i in range(torch.cuda.device_count())]
         print("Printing X in forward")
-        print(x.size())
+        print("initial",x.size())
         print(x)
         # x: (batch_size, 3, num_points)
         # l: (batch_size, 1, 16)
 
-        # batch_size = x.size(0)
-        batch_size = 100
+        batch_size = x.size(0)
+        #batch_size = 100
         print("Batch size", batch_size)
         x.size(2)
         # l = x[:, 0, 0:16].reshape(batch_size, 1, 16)
 
         x = x.unsqueeze(1)  # (32, 1, 3, 1024)
+        print("unsqueeze",x.size())
+        _ = [print(f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB") for i in range(torch.cuda.device_count())]
 
         x = get_graph_feature(x, k=self.n_knn)  # (32, 2, 3, 1024, 20)
-
+        print("get_graph",x.size())
         x = self.conv1(x)  # (32, 21, 3, 1024, 20)
-        x = self.conv2(x)  # (32, 21, 3, 1024, 20)
+        print("conv1",x.size())
+        #x = self.conv2(x)  # (32, 21, 3, 1024, 20)
+        #print("conv2",x.size())
         x1 = self.pool1(x)  # (32, 21, 3, 1024)
+        print("pool1",x.size())
 
         x = get_graph_feature(x1, k=self.n_knn)
+        print("get_graph",x.size())
         x = self.conv3(x)
-        # x = self.conv4(x)
+        print("conv3",x.size())
+        #x = self.conv4(x)
         x2 = self.pool2(x)
-
+        print("pool2",x.size())
         x = get_graph_feature(x2, k=self.n_knn)
-        # x = self.conv5(x)
+        print("get_graph",x.size())
+        x = self.conv5(x)
         x3 = self.pool3(x)
-
+        print("pool3",x.size())
         x123 = torch.cat((x1, x2, x3), dim=1)
-
+        print("x123",x.size())
         x = self.conv6(x123)
         x_mean = x.mean(dim=-1, keepdim=True).expand(x.size())
+        print("x_mean",x.size())
         x = torch.cat((x, x_mean), 1)
+        print("torch_cat",x.size())
         x = self.pool4(x)  # [batch, feature_dim, 3]
+        print("pool4",x.size())
         x1, z0 = self.VnInv(x)
         x1 = self.linear0(x1)
         return x, x1  # [batch, 1024, 3], [batch, 1024, 1024]
