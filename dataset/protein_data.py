@@ -40,7 +40,7 @@ class GeometryPartDataset(Dataset):
         self.data_list = self._read_data(data_fn)
         if overfit > 0:
             self.data_list = self.data_list[:overfit]
-        print(self.data_list)
+        # print(self.data_list)
         # additional data to load, e.g. ('part_ids', 'instance_label')
         self.data_keys = data_keys
 
@@ -113,20 +113,20 @@ class GeometryPartDataset(Dataset):
             np.load(os.path.join(data_folder, protein_fragment))
             for protein_fragment in protein_fragments
         ]
-        print("Number of fragments: ", pcs)
+        # print("Number of fragments: ", pcs)
 
         return np.stack(pcs, axis=0)
 
     def __getitem__(self, index):
-        print("Index: ", index)
+        # print("Index: ", index)
         pcs = self._get_pcs(self.data_list[index])
         num_parts = pcs.shape[0]
-        print(
-            "Number of fragments of protein : ",
-            self.data_list[index],
-            num_parts,
-            pcs.shape,
-        )
+        # print(
+        #     "Number of fragments of protein : ",
+        #     self.data_list[index],
+        #     num_parts,
+        #     pcs.shape,
+        # )
         cur_pts, cur_quat, cur_trans = [], [], []
         for i in range(num_parts):
             pc = pcs[i]
@@ -139,9 +139,9 @@ class GeometryPartDataset(Dataset):
         cur_quat = self._pad_data(np.stack(cur_quat, axis=0))  # [P, 4]
         cur_trans = self._pad_data(np.stack(cur_trans, axis=0))  # [P, 3]
 
-        print("Shape of cur_pts: ", cur_pts.shape)
-        print("Shape of cur_quat: ", cur_quat.shape)
-        print("Shape of cur_trans", cur_trans.shape)
+        # print("Shape of cur_pts: ", cur_pts.shape)
+        # print("Shape of cur_quat: ", cur_quat.shape)
+        # print("Shape of cur_trans", cur_trans.shape)
 
         """
         data_dict = {
@@ -205,8 +205,8 @@ class GeometryPartDataset(Dataset):
         return data_dict
 
     def __len__(self):
-        print("Data List: ", self.data_list)
-        print("Length of data list is: ", len(self.data_list))
+        # print("Data List: ", self.data_list)
+        # print("Length of data list is: ", len(self.data_list))
         return len(self.data_list)
 
 
