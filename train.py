@@ -42,7 +42,7 @@ def main(cfg):
     print("Checkpoint dir: ", ckp_dir)
     checkpoint_callback = ModelCheckpoint(
         # dirpath=ckp_dir,
-        dirpath="~/siddhesh_mann/",
+        dirpath="~/siddhesh_mann/checkpoints",
         filename="model-{epoch:03d}",
         save_top_k=-1,
         mode="max",
