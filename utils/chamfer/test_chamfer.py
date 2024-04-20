@@ -34,15 +34,6 @@ def test_chamfer_cpu(xyz1, xyz2):
     # ---------------------------------------------------------------------------- #
     # NWC format
     # ---------------------------------------------------------------------------- #
-    # batch_size = 32
-    # num_points = 2048
-    # xyz1 = torch.rand(batch_size, num_points, 3).float()
-    # xyz2 = torch.rand(batch_size, num_points, 3).float()
-    # xyz1 = torch.tensor([[[0, 0, 1], [1, 0, 0]]]).float()
-    # xyz2 = torch.tensor([[[0, 0, 1.1], [1.2, 0, 0]]]).float()
-    # print(xyz1.device, xyz1.shape)
-    # print(xyz2.device, xyz2.shape)
-    # print(xyz1.device, xyz2.device)
 
     # check forward
     (

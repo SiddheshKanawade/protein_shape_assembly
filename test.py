@@ -39,6 +39,8 @@ def test(cfg):
     all_results = {metric: [] for metric in all_metrics.keys()}
 
     results = model.test_results
+    print("Testing results...")
+    print(results)
     results = {k[5:]: v.detach().cpu().numpy() for k, v in results.items()}
     for metric in all_metrics.keys():
         all_results[metric].append(results[metric] * all_metrics[metric])
