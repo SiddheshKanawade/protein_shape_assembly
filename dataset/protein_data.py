@@ -240,13 +240,13 @@ def build_geometry_dataloader_protein(cfg):
     data_dict["shuffle_parts"] = False
     val_set = GeometryPartDataset(**data_dict)
     val_loader = DataLoader(
-         dataset=val_set,
-         batch_size=cfg.exp.batch_size,
-         shuffle=False,
-         num_workers=cfg.exp.num_workers,
-         pin_memory=False,
-         drop_last=False,
-         persistent_workers=(cfg.exp.num_workers > 0),
-     )
+        dataset=val_set,
+        batch_size=cfg.exp.batch_size,
+        shuffle=False,
+        num_workers=cfg.exp.num_workers,
+        pin_memory=False,
+        drop_last=False,
+        persistent_workers=(cfg.exp.num_workers > 0),
+    )
     print("Len of Val Loader: ", len(val_loader))
-    return train_loader, val_loader
+    return train_loader

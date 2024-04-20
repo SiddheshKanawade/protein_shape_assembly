@@ -65,10 +65,9 @@ class BaseModel(pl.LightningModule):
         """Forward pass to predict poses for each part."""
 
     def training_step(self, data_dict, batch_idx, optimizer_idx=-1):
-        print(f"Batch {batch_idx}")
-        print(f"Datadict: {data_dict[batch_idx]}")
+        # print(f"Datadict: {data_dict[batch_idx]}")
         loss_dict = self.forward_pass(
-            data_dict[batch_idx], mode="train", optimizer_idx=optimizer_idx
+            data_dict, mode="train", optimizer_idx=optimizer_idx
         )
         print(f"Training Loss: {loss_dict}")
         # self.log('train/loss', loss_dict["loss"], on_step=True, on_epoch=True, prog_bar=True, logger=True)
