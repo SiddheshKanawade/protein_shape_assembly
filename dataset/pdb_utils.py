@@ -40,4 +40,3 @@ def convert_pdb_to_np_array_point_cloud(filepath_pdb, num_samples=1000):
     sampled_coords = sampled_coords_tensor.numpy()
 
     return sampled_coords
-
