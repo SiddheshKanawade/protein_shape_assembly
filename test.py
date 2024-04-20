@@ -25,8 +25,8 @@ def test(cfg):
         strategy="dp" if len(all_gpus) > 1 else None,
     )
 
-    _, val_loader = build_dataloader(cfg)
-    trainer.test(model, val_loader, ckpt_path=cfg.exp.weight_file)
+    train_loader, val_loader = build_dataloader(cfg)
+    trainer.test(model, train_loader, ckpt_path=cfg.exp.weight_file)
 
     all_metrics = {
         "rot_rmse": 1.0,
