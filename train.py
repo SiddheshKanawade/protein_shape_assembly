@@ -43,10 +43,20 @@ def main(cfg):
     checkpoint_callback = ModelCheckpoint(
         dirpath=ckp_dir,
         filename="model-{epoch:03d}",
-        monitor="val/part_acc",
-        save_top_k=5,
+        save_top_k=-1,
         mode="max",
     )
+
+    # # configure callbacks
+    # checkpoint_callback = ModelCheckpoint(
+    #     dirpath=ckp_dir,
+    #     filename="model-{epoch:03d}-{step}",
+    #     every_n_train_steps=500,  # Save every 500 training steps
+    #     save_top_k=-1,  # Save all checkpoints
+    #     save_last=True,  # Always save the last state
+    #     save_weights_only=True  # Saving model weights only
+    # )
+
     callbacks = [
         LearningRateMonitor("epoch"),
         checkpoint_callback,
@@ -60,7 +70,7 @@ def main(cfg):
     all_gpus = list(cfg.exp.gpus)
     print(all_gpus, cfg.exp)
     trainer = pl.Trainer(
-        gpus=[0,1],
+        gpus=[0, 1],
         strategy=parallel_strategy if len(all_gpus) > 1 else None,
         max_epochs=cfg.exp.num_epochs,
         callbacks=callbacks,
@@ -97,11 +107,16 @@ def main(cfg):
         ckp_path = None
 
     torch.cuda.empty_cache()
-    _ = [print(f'GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB') for i in range(torch.cuda.device_count())]
+    _ = [
+        print(
+            f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB"
+        )
+        for i in range(torch.cuda.device_count())
+    ]
 
     print(f"This is ckp_path: {ckp_path}")
     trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
-    #trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
+    # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 

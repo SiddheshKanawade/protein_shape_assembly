@@ -30,9 +30,7 @@ class VNLinear(pl.LightningModule):
 
 
 class VNLeakyReLU(pl.LightningModule):
-    def __init__(
-        self, in_channels, share_nonlinearity=False, negative_slope=0.2
-    ):
+    def __init__(self, in_channels, share_nonlinearity=False, negative_slope=0.2):
         super(VNLeakyReLU, self).__init__()
         if share_nonlinearity == True:
             self.map_to_dir = nn.Linear(in_channels, 1, bias=False)
@@ -55,9 +53,7 @@ class VNLeakyReLU(pl.LightningModule):
 
 
 class VNNewLeakyReLU(pl.LightningModule):
-    def __init__(
-        self, in_channels, share_nonlinearity=False, negative_slope=0.2
-    ):
+    def __init__(self, in_channels, share_nonlinearity=False, negative_slope=0.2):
         super(VNNewLeakyReLU, self).__init__()
         if share_nonlinearity == True:
             self.map_to_dir = nn.Linear(in_channels, 1, bias=False)
@@ -145,9 +141,7 @@ class VNLinearAndLeakyReLU(pl.LightningModule):
         # BatchNorm
         self.use_batchnorm = use_batchnorm
         if use_batchnorm != "none":
-            self.batchnorm = VNBatchNorm(
-                out_channels, dim=dim, mode=use_batchnorm
-            )
+            self.batchnorm = VNBatchNorm(out_channels, dim=dim, mode=use_batchnorm)
 
     def forward(self, x):
         """
@@ -198,15 +192,13 @@ class VNMaxPool(pl.LightningModule):
         d = self.map_to_dir(x.transpose(1, -1)).transpose(1, -1)
         dotprod = (x * d).sum(2, keepdims=True)
         idx = dotprod.max(dim=-1, keepdim=False)[1]
-        index_tuple = torch.meshgrid(
-            [torch.arange(j) for j in x.size()[:-1]]
-        ) + (idx,)
+        index_tuple = torch.meshgrid([torch.arange(j) for j in x.size()[:-1]]) + (idx,)
         x_max = x[index_tuple]
         return x_max
 
 
-def mean_pool(x, dim=-1, keepdim = False):
-    print(x.mean(dim=dim,keepdim = False).size())
+def mean_pool(x, dim=-1, keepdim=False):
+    # print(x.mean(dim=dim,keepdim = False).size())
     return x.mean(dim=dim, keepdim=False)
 
 
@@ -308,9 +300,7 @@ class VNInFeature(nn.Module):
             share_nonlinearity=share_nonlinearity,
             negative_slope=negative_slope,
         )
-        self.vn_lin = conv1x1(
-            in_channels // 4, 2 if self.use_rmat else 3, dim=dim
-        )
+        self.vn_lin = conv1x1(in_channels // 4, 2 if self.use_rmat else 3, dim=dim)
 
     def forward(self, x):
         """

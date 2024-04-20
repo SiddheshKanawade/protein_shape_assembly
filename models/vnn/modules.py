@@ -79,12 +79,12 @@ class VN_DGCNN(pl.LightningModule):
         self.linear0 = nn.Linear(3, 2 * feat_dim)
 
     def forward(self, x):
-        _ = [
-            print(
-                f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB"
-            )
-            for i in range(torch.cuda.device_count())
-        ]
+        # _ = [
+        #     print(
+        #         f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB"
+        #     )
+        #     for i in range(torch.cuda.device_count())
+        # ]
         print("Printing X in forward")
         print("initial", x.size())
         # print(x)
@@ -99,12 +99,12 @@ class VN_DGCNN(pl.LightningModule):
 
         x = x.unsqueeze(1)  # (32, 1, 3, 1024)
         # print("unsqueeze",x.size())
-        _ = [
-            print(
-                f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB"
-            )
-            for i in range(torch.cuda.device_count())
-        ]
+        # _ = [
+        #     print(
+        #         f"GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB"
+        #     )
+        #     for i in range(torch.cuda.device_count())
+        # ]
 
         x = get_graph_feature(x, k=self.n_knn)  # (32, 2, 3, 1024, 20)
         # print("get_graph",x.size())
