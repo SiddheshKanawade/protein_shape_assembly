@@ -70,10 +70,15 @@ class BaseModel(pl.LightningModule):
         loss_dict = self.forward_pass(
             data_dict, mode="train", optimizer_idx=optimizer_idx
         )
+        print(f"Training Loss: {loss_dict}")
+        # self.log('train/loss', loss_dict["loss"], on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss_dict["loss"]
 
     def validation_step(self, data_dict, batch_idx):
         loss_dict = self.forward_pass(data_dict, mode="val", optimizer_idx=-1)
+        print("Validation loss: ", loss_dict)
+        #self.log('val/loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        #self.log('val/part_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss_dict
 
     def validation_epoch_end(self, outputs):

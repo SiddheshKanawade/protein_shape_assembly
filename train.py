@@ -17,7 +17,7 @@ def main(cfg):
     model = build_model(cfg)
 
     # Initialize dataloaders
-    train_loader = build_dataloader(cfg)
+    train_loader, val_loader = build_dataloader(cfg)
 
     # Create checkpoint directory
     SLURM_JOB_ID = os.environ.get("SLURM_JOB_ID")
@@ -68,7 +68,7 @@ def main(cfg):
         benchmark=args.cudnn,  # cudnn benchmark
         gradient_clip_val=cfg.optimizer.clip_grad,  # clip grad norm
         check_val_every_n_epoch=cfg.exp.val_every,
-        log_every_n_steps=5,
+        log_every_n_steps=1,
         profiler="simple",  # training time bottleneck analysis
         # detect_anomaly=True,  # for debug
     )
@@ -99,8 +99,9 @@ def main(cfg):
     torch.cuda.empty_cache()
     _ = [print(f'GPU {i} - Name: {torch.cuda.get_device_properties(i).name}, Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB, Allocated Memory: {torch.cuda.memory_allocated(i) / 1024**3:.2f} GB, Cached Memory: {torch.cuda.memory_reserved(i) / 1024**3:.2f} GB, Max Allocated Memory: {torch.cuda.max_memory_allocated(i) / 1024**3:.2f} GB') for i in range(torch.cuda.device_count())]
 
+    print(f"This is ckp_path: {ckp_path}")
     trainer.fit(model, train_dataloaders=train_loader, ckpt_path=ckp_path)
-    # trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
+    #trainer.validate(dataloaders = val_loader, ckpt_path=ckp_path)
 
     print("Done training...")
 
