@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-pc = "protein_extracted/1a6f/1a6f_94_108.npy"
+pc = "protein_extracted/108m/108m_97_100.npy"
 # Load your point cloud data
 point_cloud = np.load(pc)
 print(point_cloud)
